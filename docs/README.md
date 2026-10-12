@@ -31,7 +31,7 @@ Same kickoff footage through each detector:
 
 ![Control Hub (CV)](.gitbook/assets/control_hub_cv_example_1.gif)
 
-![Control Hub (Lab)](.gitbook/assets/cielab_demo.gif)
+![Control Hub (Lab, archived)](.gitbook/assets/cielab_demo.gif)
 
 The Limelight 3A model in the real world:
 

@@ -1,6 +1,6 @@
 # Hive Vision — Control Hub track (OpenCV, no model)
 
-The Control Hub track of Hive Vision. Raw-OpenCV alternative to the Limelight track: no coprocessor, no TensorFlow, no extra hardware — color-threshold detection runs on the FTC **Control Hub** itself via **VisionPortal** (VisionProcessor). Its HSV ranges are learned from the Limelight track's model detections, so both tracks agree on where the balls are.
+The Control Hub track of Hive Vision. Raw-OpenCV alternative to the Limelight track: no coprocessor, no TensorFlow, no extra hardware — color-threshold detection runs on the FTC **Control Hub** itself via **VisionPortal** (VisionProcessor). Its HSV ranges were learned from the (now-archived) YOLO reference model's detections.
 
 > **⚠️ Candidate detector, not a reliable ball detector.** Precision on the development video: yellow 40%, red 26%, blue 66%. Treat every detection as a _candidate_ — require N consecutive frames (e.g. 3‑5) with the same normalized position before acting.
 

@@ -2,8 +2,8 @@
 
 Model-free color detection that runs on the robot's Control Hub itself — no
 coprocessor, no TensorFlow, no model. The shipped HSV config
-(`cv/tools/hsv_tuned.json`) was learned from the YOLO model's detections, so
-both tracks agree on where the balls are.
+(`cv/tools/hsv_tuned.json`) was learned from the (now-archived) YOLO model's
+detections.
 
 > **Candidate detector, not a reliable ball detector.** Measured precision on
 > the dev video: yellow 40%, red 26%, blue 66%. Treat every detection as a
@@ -96,8 +96,8 @@ the tuned values into the static fields at the top of
 
 - Keep the field white-balanced so red and blue stay distinct (pure color is a
   luminance-coupled signal).
-- Deep shadows break it — a shadowed ball reads as a different color. That's
-  the [Lab track's](hub_lab_setup.md) job; a ball so dark even Lab can't see it
-  belongs to the [Limelight 3A](limelight_3a_setup.md).
+- Deep shadows break it — a shadowed ball reads as a different color. That
+  belongs to the [Limelight 3A](limelight_3a_setup.md) (the Lab track that used
+  to cover this is archived).
 - Full workflow, tuning notes, and measured recall/precision are in
   [cv/README.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/cv/README.md).

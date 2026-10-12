@@ -23,6 +23,6 @@ Same kickoff footage, one preview per detector:
 
 ![Control Hub (OpenCV)](../.gitbook/assets/control_hub_cv_example_1.gif)
 
-![Control Hub (Lab)](../.gitbook/assets/cielab_demo.gif)
+![Control Hub (Lab, archived)](../.gitbook/assets/cielab_demo.gif)
 
 Still-frame samples: [CV best candidate](../demo/samples/control_hub_cv_sample_1_best.jpg) · [CV all gated candidates](../demo/samples/control_hub_cv_sample_2_all.jpg)

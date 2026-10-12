@@ -23,5 +23,6 @@ This page covers the decision and what to expect from the outputs.
 
 - Expect **7–11% precision** on a real field. The hub outputs are candidates —
   confirm each across several frames before the robot acts.
-- Both pipelines were fit/tuned from YOLO reference detections on published footage; re-check
-  recall on *your* field's white balance before relying on them.
+- The HSV config was fit/tuned from (now-archived) YOLO reference detections on
+  published footage; re-check recall on *your* field's white balance before
+  relying on it.

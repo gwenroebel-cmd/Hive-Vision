@@ -6,8 +6,8 @@ the only one that understands shape, so shadows and dark balls still work.
 
 > Looking for a model-free track you can run on a plain Control Hub + webcam
 > with no Limelight? See the
-> [Control Hub CV (HSV)](quick_start_cv.md) and
-> [Control Hub Lab](quick_start_lab.md) quick starts instead.
+> [Control Hub CV (HSV)](quick_start_cv.md) quick start. (The Lab track is
+> [archived](quick_start_lab.md).)
 
 > **Goal:** by the end of this page you have a working `BallTracker` (or the
 > full `BallChaseFollower` chase) and you can read the current target from

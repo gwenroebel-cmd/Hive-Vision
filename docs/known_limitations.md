@@ -18,7 +18,7 @@ what the library already does about it.
 | **Extremely small / distant balls** | Below the blob-size band or the detector's pixel minimum | Higher-resolution model, closer approach (`FOLLOWER_APPROACH_DIST`), don't act beyond `MAX_PLAN_RANGE` |
 | **Heavy motion blur** | Low exposure times + fast motion smudge small fast-moving balls | Neural detector; keep the camera framerate up; avoid acting on a single blurred frame (confirmation helps) |
 | **Balls completely occluded by robots** | A robot can fully cover a ball; nothing sees through it | The tracker's lock + `predicted` coast keeps the last-known position while it's hidden for `LOCK_LOST_MS` |
-| **Camera exposure changes** | White balance / exposure churn between the menu-lit practice and the match-lit field | Re-tune HSV/Lab in match lighting; `Lab`'s adaptive chroma floor is more forgiving than HSV |
+| **Camera exposure changes** | White balance / exposure churn between the menu-lit practice and the match-lit field | Re-tune HSV in match lighting, or move to the Limelight 3A SSD — the archived Lab track's adaptive chroma floor was more forgiving than HSV |
 | **New field lighting** | Every venue lights the field differently | Recalibrate the color tracks per venue; the neural detector is the stable across-lighting choice |
 | **Two balls close together** | Nearest ball can flip-flop frame to frame | `BallTracker`'s angular + color-bound target lock (this is its primary job) |
 
@@ -54,7 +54,7 @@ The reports behind the numbers (`cv/docs/cv_detector_report.md`,
 - The SSD (Limelight 3A) model is verified on PC runners; confirm it loads and
   reports on a real 3A before match day — see the
   [setup page](detector_tracks/limelight_3a_ssd/limelight_3a_setup.md).
-- Detection metrics are **candidate-detection numbers against YOLO reference
-  detections**, not end-to-end pickup success. Measure pickups on your own
-  robot once the targets lock.
+- Detection metrics are **candidate-detection numbers against archived YOLO
+  reference detections**, not end-to-end pickup success. Measure pickups on
+  your own robot once the targets lock.
 - "Shadow-robust" means *more robust than HSV* — it does not mean shadow-proof.

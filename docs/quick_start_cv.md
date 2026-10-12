@@ -86,7 +86,7 @@ deploying at a different resolution. The full table is in
 | Symptom | First thing to check |
 |---------|----------------------|
 | No blobs anywhere | Webcam name matches config; white balance on; `MIN_AREA_PX` too high for your resolution |
-| Blobs flicker / appear everywhere | Field white balance; deep shadows (that's the [Lab](quick_start_lab.md) track's job); raise the per-frame frame-consistency gate |
+| Blobs flicker / appear everywhere | Field white balance; deep shadows (that's the [Limelight 3A](quick_start.md)'s job — the Lab track is archived); raise the per-frame frame-consistency gate |
 | Wrong color detected | Keep red vs blue luminance distinct; retune with `python cv/tools/hsv_tuner.py path/to/frame.jpg` |
 
 ## You're ready when
