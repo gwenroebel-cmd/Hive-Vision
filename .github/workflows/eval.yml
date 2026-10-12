@@ -24,10 +24,5 @@ jobs:
           --weights neural-net/weights/best.pt \
           --truth-json /tmp/ci_truth_cv.json
 
-      - name: Eval Control Hub Lab track
-        run: python lab/tools/eval_lab_vs_yolo.py \
-          --source demo/cielab_demo.mp4 \
-          --config lab/tools/lab_tuned.json \
-          --compare-hsv \
-          --weights neural-net/weights/best.pt \
-          --truth-json /tmp/ci_truth_lab.json
+      # Lab track eval removed 2026-10-11: the Lab detector is archived under
+      # archive/lab/ and is no longer maintained.

@@ -21,8 +21,8 @@ The shipped SSD-MobileNetV2 Limelight 3A model, tested in the real world
 | PC only | YOLO float32 TFLite test artifact | `../neural-net/weights/best_limelight3a_float32.tflite` |
 | PC only | YOLO int8-weight (DRQ) TFLite test artifact, 3.4 MB | `../neural-net/weights/best_limelight3a_int8.tflite` |
 | Control Hub | HSV Java pipeline + shared base | `../cv/TeamCode/BallDetectorPipeline.java` (extends `BallBlobPipeline.java`) |
-| Control Hub | Lab chromaticity Java pipeline | `../lab/TeamCode/LabBallDetectorPipeline.java` (extends `BallBlobPipeline.java`) |
-| Control Hub | Lab learned config | `../lab/tools/lab_tuned.json` |
+| Control Hub *(archived)* | Lab chromaticity Java pipeline (retired 2026-10-11) | `../archive/lab/TeamCode/LabBallDetectorPipeline.java` (extends `BallBlobPipeline.java`) |
+| Control Hub *(archived)* | Lab learned config (retired 2026-10-11) | `../archive/lab/tools/lab_tuned.json` |
 | — | source checkpoint (re-training/re-export) | `../neural-net/weights/best.pt` |
 
 Class order is `yellow_pollen`, `red_nectar`, `blue_nectar` — keep
@@ -43,7 +43,7 @@ share the same geometry gates):
 |---------|---------|-----------|-----------------|--------------|---------------|-----------------|
 | **YOLO** | PC / ONNX Runtime (reference — not a Limelight) | shape + context (CNN) | — reference — | — reference — | — reference — | ~100% |
 | **HSV (cv/)** | Control Hub | tuned HSV window | 62.0 / 10.5 | 34.5 / 8.6 | 52.8 / 11.1 | 40.0% |
-| **Lab (lab/)** | Control Hub | learned Lab hue band + adaptive chroma floor | 45.5 / 7.5 | 46.0 / 8.7 | 54.5 / 8.1 | **95.5%** |
+| **Lab (archived)** | Control Hub *(retired 2026-10-11, source in `archive/lab/`)* | learned Lab hue band + adaptive chroma floor | 45.5 / 7.5 | 46.0 / 8.7 | 54.5 / 8.1 | **95.5%** |
 
 What the numbers mean:
 
@@ -68,7 +68,7 @@ What the numbers mean:
   head-to-head on this page is the apples-to-apples cross-track comparison;
   prefer it when comparing tracks.
 
-Full detail: [`../lab/docs/lab_detector_report.md`](../lab/docs/lab_detector_report.md)
+Full detail: [`../archive/lab/docs/lab_detector_report.md`](../archive/lab/docs/lab_detector_report.md)
 and [`../cv/docs/cv_detector_report.md`](../cv/docs/cv_detector_report.md).
 
 ## Why the int8 model is dynamic-range, not full-int8
@@ -109,7 +109,7 @@ python -m ultralytics.export model=../neural-net/weights/best.pt format=onnx img
 .venv-tflite/Scripts/python.exe ~/Temp/opencode/verify_int8.py
 
 # re-run the Lab metrics (raw, un-annotated footage)
-python ../lab/tools/eval_lab_vs_yolo.py --source path/to/match_raw.mp4 \
-  --config ../lab/tools/lab_tuned.json --compare-hsv \
-  --truth-json ../lab/docs/yolo_truth_lab.json
+python ../archive/lab/tools/eval_lab_vs_yolo.py --source path/to/match_raw.mp4 \
+  --config ../archive/lab/tools/lab_tuned.json --compare-hsv \
+  --truth-json ../archive/lab/docs/yolo_truth_lab.json
 ```

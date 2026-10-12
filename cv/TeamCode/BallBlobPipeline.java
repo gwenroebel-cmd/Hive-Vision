@@ -1,6 +1,6 @@
 /*
  * BallBlobPipeline - shared base for the two Control Hub ball detectors
- * (cv/TeamCode/BallDetectorPipeline.java and lab/TeamCode/LabBallDetectorPipeline.java).
+ * (cv/TeamCode/BallDetectorPipeline.java and archive/lab/TeamCode/LabBallDetectorPipeline.java).
  * Everything identical between them lives here, so a fix (bestOf()'s cost
  * shape, a new field on BallBlob) can't silently land in only one detector:
  *   - BallColor + BallBlob

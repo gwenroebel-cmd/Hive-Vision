@@ -8,14 +8,14 @@ Pick the track you have hardware for and be up in ~5 minutes:
 
 * **[Limelight 3A (SSD)](quick_start.md)** — the neural track. Most capable: shape + shadow aware, runs on the Limelight's own CPU. Start here.
 * **[Control Hub CV (HSV)](quick_start_cv.md)** — model-free color thresholding on any Control Hub + webcam. Cheapest, worst in shadows.
-* **[Control Hub Lab](quick_start_lab.md)** — model-free chromaticity on the same webcam. The shadow-robust middle track.
+* **[Control Hub Lab](quick_start_lab.md)** *(archived)* — model-free chromaticity on the same webcam. The shadow-robust middle track. Retired 2026-10-11; source in `archive/lab/`.
 
 ## The rest of this book
 
 * [Which detector track?](detector_tracks/) — the decision guide, with full per-track setup walkthroughs:
   * [Limelight 3A (SSD) — set it up](detector_tracks/limelight_3a_ssd/limelight_3a_setup.md)
   * [PC / ONNX Runtime (YOLO) — run it on a PC](detector_tracks/onnx_pc/onnx_run_pc.md)
-  * [Control Hub (OpenCV + Lab)](detector_tracks/control_hub/) — [HSV setup](detector_tracks/control_hub/hub_hsv_setup.md) · [Lab setup](detector_tracks/control_hub/hub_lab_setup.md)
+  * [Control Hub (OpenCV)](detector_tracks/control_hub/) — [HSV setup](detector_tracks/control_hub/hub_hsv_setup.md) · [Lab setup](detector_tracks/control_hub/hub_lab_setup.md) *(archived)*
 * [Calibration & coordinates](calibration.md) — how to measure `CAM_*`, and the sign conventions
 * [Known limitations](known_limitations.md) — what the detectors can't do, and the fixes
 * [Collecting training data](training_data.md)

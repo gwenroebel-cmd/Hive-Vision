@@ -12,8 +12,8 @@ Everything needed to deploy the full three-track stack, gathered in one place. W
 | PC only                            | YOLO float32 TFLite test artifact                   | `../neural-net/weights/best_limelight3a_float32.tflite`                 |
 | PC only                            | YOLO int8-weight (DRQ) TFLite test artifact, 3.4 MB | `../neural-net/weights/best_limelight3a_int8.tflite`                    |
 | Control Hub                        | HSV Java pipeline + shared base                     | `../cv/TeamCode/BallDetectorPipeline.java` (extends `BallBlobPipeline.java`) |
-| Control Hub                        | Lab chromaticity Java pipeline                      | `../lab/TeamCode/LabBallDetectorPipeline.java` (extends `BallBlobPipeline.java`) |
-| Control Hub                        | Lab learned config                                  | `../lab/tools/lab_tuned.json`                                     |
+| Control Hub *(archived)*          | Lab chromaticity Java pipeline (retired 2026-10-11) | `../archive/lab/TeamCode/LabBallDetectorPipeline.java` (extends `BallBlobPipeline.java`) |
+| Control Hub *(archived)*          | Lab learned config (retired 2026-10-11)             | `../archive/lab/tools/lab_tuned.json`                                     |
 | —                                  | source checkpoint (re-training/re-export)           | `../neural-net/weights/best.pt`                                         |
 
 Class order is `yellow_pollen`, `red_nectar`, `blue_nectar` — keep `labels.txt` matching on the 3A. The SSD-MobileNetV2 3A model emits **`TFLite_Detection_PostProcess`** outputs (`num`, `scores`, `class_ids`, `boxes`) already decoded — no NMS needed on your side. The ONNX and the YOLO float32/int8 TFLite exports instead emit the **raw YOLO tensor** `output0` (1×7×18900) — \[cx, cy, w, h, scores ×3] in the model grid, pre-NMS — and the device or FTC pipeline must decode and NMS those itself.
@@ -26,17 +26,17 @@ Measured against a 293-frame real-match dataset that the flagship YOLO scored at
 | -------------- | ----------------------------------------------- | -------------------------------------------- | ---------------- | ---------------- | ---------------- | --------------- |
 | **YOLO**       | PC / ONNX Runtime (reference — not a Limelight) | shape + context (CNN)                        | — reference — | — reference — | — reference — | \~100%          |
 | **HSV (cv/)**  | Control Hub                                     | tuned HSV window                             | 62.0 / 10.5      | 34.5 / 8.6       | 52.8 / 11.1      | 40.0%           |
-| **Lab (lab/)** | Control Hub                                     | learned Lab hue band + adaptive chroma floor | 45.5 / 7.5       | 46.0 / 8.7       | 54.5 / 8.1       | **95.5%**       |
+| **Lab (archived)** | Control Hub *(retired 2026-10-11, source in `archive/lab/`)* | learned Lab hue band + adaptive chroma floor | 45.5 / 7.5       | 46.0 / 8.7       | 54.5 / 8.1       | **95.5%**       |
 
 What the numbers mean:
 
 * **YOLO is the reference.** It is the only track that finds shapes, so it is the only one that recovers low-chroma / deep-shadow balls. Treat its output as the reference and the Control Hub tracks as candidate signals (7–11% precision on this footage — the field is full of yellow/red/blue patches).
 * **Lab beats HSV on red** in recall and precision, and crushes it in shadows (95.5% vs 40% dark-frame recall). That is its purpose: Lab hue is shadow-invariant and its chroma floor adapts downward per frame.
 * **HSV keeps yellow and blue precision.** Its yellow window was hand-tuned on luckier footage; Lab is rigidly fit on this one.
-* Pick a track per robot, not per color: Lab when balls sit in shadows, HSV when you want the absolute cheapest path. Never rely on a color detector in the darkest corners — that is YOLO's job.
+* Pick a track per robot, not per color: HSV when you want the absolute cheapest path (Lab is archived; use the Limelight SSD for shadows). Never rely on a color detector in the darkest corners — that is YOLO's job.
 * **Same config, two measurements.** The CV report (`../cv/docs/cv_detector_report.md`) measured this same shipped HSV config on its own 866-frame dev video and got higher numbers (yellow 68.7% / red 80.1% / blue 82.3% recall at 39.9 / 26.0 / 65.5% precision) — different footage, not a different detector. The shared-truth head-to-head on this page is the apples-to-apples cross-track comparison; prefer it when comparing tracks.
 
-Full detail: [`../lab/docs/lab_detector_report.md`](../lab/docs/lab_detector_report.md) and [`../cv/docs/cv_detector_report.md`](../cv/docs/cv_detector_report.md).
+Full detail: [`../archive/lab/docs/lab_detector_report.md`](../archive/lab/docs/lab_detector_report.md) and [`../cv/docs/cv_detector_report.md`](../cv/docs/cv_detector_report.md).
 
 ## Why the int8 model is dynamic-range, not full-int8
 
@@ -64,7 +64,7 @@ python -m ultralytics.export model=../neural-net/weights/best.pt format=onnx img
 .venv-tflite/Scripts/python.exe ~/Temp/opencode/verify_int8.py
 
 # re-run the Lab metrics (raw, un-annotated footage)
-python ../lab/tools/eval_lab_vs_yolo.py --source path/to/match_raw.mp4 \
-  --config ../lab/tools/lab_tuned.json --compare-hsv \
-  --truth-json ../lab/docs/yolo_truth_lab.json
+python ../archive/lab/tools/eval_lab_vs_yolo.py --source path/to/match_raw.mp4 \
+  --config ../archive/lab/tools/lab_tuned.json --compare-hsv \
+  --truth-json ../archive/lab/docs/yolo_truth_lab.json
 ```

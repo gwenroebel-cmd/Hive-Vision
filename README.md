@@ -42,7 +42,7 @@ is found and tracked with three deployment options:
 | **Limelight 3A (TFLite)** | on the Limelight 3A connected to the robot | **SSD-MobileNetV2** (300×300, uint8-in / float-out `.tflite`) — the model now in place instead of YOLO | [`neural-net/weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite`](neural-net/README.md) + [`labels.txt`](neural-net/weights/labels.txt) |
 | **PC / ONNX Runtime (YOLO)** | dev laptop, Jetson, or another ONNX Runtime coprocessor — **not a Limelight** (Limelight neural detectors accept `.tflite`/`.hef` only, never ONNX) | YOLOv8n reference model | [`neural-net/weights/best.onnx`](neural-net/README.md) (+ `.pt` source) |
 | **Control Hub (OpenCV)** | on the robot Control Hub itself | none — pure OpenCV, no model | [`TeamCode/BallDetectorPipeline.java`](cv/README.md) |
-| **Control Hub (Lab)** | on the robot Control Hub itself | one Lab conversion, no model | [`TeamCode/LabBallDetectorPipeline.java`](lab/README.md) |
+| **Control Hub (Lab)** *(archived)* | on the robot Control Hub itself | one Lab conversion, no model | [`TeamCode/LabBallDetectorPipeline.java`](archive/lab/README.md) — retired 2026-10-11, kept for reference |
 
 These are alternative robot deployments. Use the Limelight 3A track when the
 robot has a Limelight 3A; use a Control Hub track when detection must run on
@@ -79,7 +79,7 @@ coprocessor); it never goes on a Limelight.
 
 - **Three paths, one tuning** — every Control Hub variant is learned from the
   repo's YOLOv8n reference detections (the Lab hue bands/floor via
-  `lab/tools/fit_lab_from_yolo.py`, the HSV ranges likewise), so all three
+  `archive/lab/tools/fit_lab_from_yolo.py`, the HSV ranges likewise), so all three
   agree on where the balls are. The Lab detector was therefore **optimized
   with this repo's other YOLO** (the YOLOv8n reference detections), even
   though the Limelight 3A now ships SSD-MobileNetV2.
@@ -96,7 +96,7 @@ coprocessor); it never goes on a Limelight.
   don't win.
 - **Measured, not guessed** — recall vs the model's reference detections on a
   shared 293-frame truth: yellow 62%, red 35%, blue 53% (head-to-head in
-  [`lab/docs/lab_detector_report.md`](lab/docs/lab_detector_report.md); the CV track's own
+  [`archive/lab/docs/lab_detector_report.md`](archive/lab/docs/lab_detector_report.md); the CV track's own
   866-frame measurement is in
   [`cv/docs/cv_detector_report.md`](cv/docs/cv_detector_report.md)).
 - **Drop-in FTC API** — [`api/`](api/) has `ftc_ball_chase_lib`: a tracker
@@ -174,14 +174,14 @@ python cv/tools/eval_cv_vs_yolo.py --config cv/tools/hsv_tuned.json --source pat
 
 ```bash
 # Preview the Lab detector on your own footage
-python lab/tools/realtime_lab.py --source path/to/match.mp4
+python archive/lab/tools/realtime_lab.py --source path/to/match.mp4
 
 # Live-tune the hue band + adaptive chroma floor on a field frame/webcam
-python lab/tools/lab_tuner.py path/to/frame.jpg
+python archive/lab/tools/lab_tuner.py path/to/frame.jpg
 
-# Verify versus the same model truth (learned config in lab/tools/lab_tuned.json)
-python lab/tools/eval_lab_vs_yolo.py --source path/to/match_raw.mp4 \
-  --config lab/tools/lab_tuned.json --compare-hsv
+# Verify versus the same model truth (learned config in archive/lab/tools/lab_tuned.json)
+python archive/lab/tools/eval_lab_vs_yolo.py --source path/to/match_raw.mp4 \
+  --config archive/lab/tools/lab_tuned.json --compare-hsv
 ```
 
 For the Limelight 3A, upload
@@ -194,10 +194,10 @@ on a PC / ONNX Runtime host. Read detections through the
 Limelight API used by your FTC integration. For the Control Hub paths, copy
 the shared base `cv/TeamCode/BallBlobPipeline.java` plus
 `cv/TeamCode/BallDetectorPipeline.java` (HSV) or
-`lab/TeamCode/LabBallDetectorPipeline.java` (Lab chromaticity) into
+`archive/lab/TeamCode/LabBallDetectorPipeline.java` (Lab chromaticity) into
 `TeamCode/`, register the processor with a `VisionPortal`, and read
 `bestOf(BallColor)` — see [cv/README.md](cv/README.md) and
-[lab/README.md](lab/README.md).
+[archive/lab/README.md](archive/lab/README.md).
 
 ### Limelight 3A FTC integration
 
@@ -257,11 +257,11 @@ Limelight API used by your FTC integration (see
 |-------|--------|-----------|------|
 | PC / ONNX Runtime (YOLOv8n, 960) | reference | reference | source of reference detections; also the "other YOLO" the Control Hub tracks are tuned with |
 | Control Hub (OpenCV) | yellow 62.0% / red 34.5% / blue 52.8% | 10.5 / 8.6 / 11.1% | raw per-frame **candidate** precision — treat as a candidate signal |
-| Control Hub (Lab) | yellow 45.5% / red 46.0% / blue 54.5% | 7.5 / 8.7 / 8.1% | raw per-frame **candidate** precision — Control Hub detections must be confirmed across several frames before the robot acts, so confirmed-target precision is far higher; dark-frame red recall 95.5% vs 40% for HSV (see [lab report](lab/docs/lab_detector_report.md)) |
+| Control Hub (Lab) | yellow 45.5% / red 46.0% / blue 54.5% | 7.5 / 8.7 / 8.1% | raw per-frame **candidate** precision — Control Hub detections must be confirmed across several frames before the robot acts, so confirmed-target precision is far higher; dark-frame red recall 95.5% vs 40% for HSV (see [lab report](archive/lab/docs/lab_detector_report.md)) |
 
 Both Control Hub rows are measured **head-to-head on a shared 293-frame truth**
 (identical YOLO reference detections and geometry gates — see
-[`lab/docs/lab_detector_report.md`](lab/docs/lab_detector_report.md)). The CV track's
+[`archive/lab/docs/lab_detector_report.md`](archive/lab/docs/lab_detector_report.md)). The CV track's
 own separate evaluation on its 866-frame dev video reports higher raw numbers —
 yellow 68.7% / red 80.1% / blue 82.3% recall at 39.9 / 26.0 / 65.5% precision —
 because that footage skews easier for HSV (see
@@ -296,7 +296,7 @@ hive-vision/
     TeamCode/                 BallBlobPipeline.java + BallDetectorPipeline.java (drop-in processors)
     tools/                    tuning/eval tooling + shipped HSV config
     docs/                     evaluation report, cached model truth
-  lab/                        Control Hub track (Lab chromaticity)
+  archive/lab/                  ARCHIVED Control Hub track (Lab chromaticity, retired 2026-10-11)
     TeamCode/                 BallBlobPipeline.java + LabBallDetectorPipeline.java (drop-in processor)
     tools/                    YOLO-learned config, fitter, sweep, tuner, viewer
     docs/                     evaluation report, cached YOLO reference detections

@@ -25,7 +25,7 @@ what the library already does about it.
 ## What your own evaluation showed
 
 The reports behind the numbers (`cv/docs/cv_detector_report.md`,
-`lab/docs/lab_detector_report.md`) document exactly the misses:
+`archive/lab/docs/lab_detector_report.md`) document exactly the misses:
 
 - **HSV yellow misses** are frequently the *wrong yellow blob being selected* —
   a selection problem, not a "no detection" problem. The target lock + a

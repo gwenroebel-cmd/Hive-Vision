@@ -1,5 +1,10 @@
 # Hive Vision — 5-minute quick start (Control Hub Lab)
 
+> **ARCHIVED (2026-10-11).** The Lab track is retired — no teams use it. Source
+> lives in [`archive/lab/`](../archive/lab/README.md) for reference only. Use
+> the [Limelight 3A SSD](detector_tracks/limelight_3a_ssd/limelight_3a_setup.md) or the
+> [Control Hub OpenCV/HSV](quick_start_cv.md) track instead.
+
 The shadow-robust, model-free track: CIELAB chromaticity (hue + an adaptive
 chroma floor) separates "what color" from "how bright", so a ball sitting in
 a mid shadow keeps its hue — where the HSV track reads it as a different
@@ -12,14 +17,14 @@ color, Lab mostly still works.
 
 | Thing | What it's for |
 |-------|---------------|
-| `lab/TeamCode/BallBlobPipeline.java` + `lab/TeamCode/LabBallDetectorPipeline.java` | the `VisionProcessor` drop-in + the base class it extends |
-| `lab/tools/lab_tuned.json` | shipped learned constants |
+| `archive/lab/TeamCode/BallBlobPipeline.java` + `archive/lab/TeamCode/LabBallDetectorPipeline.java` | the `VisionProcessor` drop-in + the base class it extends |
+| `archive/lab/tools/lab_tuned.json` | shipped learned constants |
 | FTC SDK project with a USB webcam | `VisionPortal` + EasyOpenCV |
 
 ## 1. Copy the pipeline
 
-Copy `lab/TeamCode/BallBlobPipeline.java` (the base class) **and**
-`lab/TeamCode/LabBallDetectorPipeline.java` into your FTC project's
+Copy `archive/lab/TeamCode/BallBlobPipeline.java` (the base class) **and**
+`archive/lab/TeamCode/LabBallDetectorPipeline.java` into your FTC project's
 `TeamCode/` folder.
 
 ## 2. Register it in an OpMode
@@ -82,5 +87,5 @@ Unlike the HSV track, the Lab area gates are stored per-1080p and scale
 
 Deeper: [Set up the Lab track](detector_tracks/control_hub/hub_lab_setup.md),
 the dark-frame head-to-head in
-[lab/docs/lab_detector_report.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/lab/docs/lab_detector_report.md),
+[archive/lab/docs/lab_detector_report.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/archive/lab/docs/lab_detector_report.md),
 and the [Known limitations](known_limitations.md) page.

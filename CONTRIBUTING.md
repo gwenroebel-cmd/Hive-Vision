@@ -31,9 +31,9 @@ cd ftc_ball_chase_lib
 - **One logical change per PR.** Fix the docs and the code in the same PR
   when they are coupled (e.g. a new class field with its reference entry).
 - **Run the eval before and after** any detector or config change:
-  `python cv/tools/eval_cv_vs_yolo.py` and
-  `python lab/tools/eval_lab_vs_yolo.py` — see [README](README.md) for the
-  exact commands. Report the numbers in the PR body.
+  `python cv/tools/eval_cv_vs_yolo.py` — see [README](README.md) for the
+  exact commands. Report the numbers in the PR body. (The Lab track eval was
+  retired with the track in 2026-10; its tools live in `archive/lab/`.)
 - **Never re-order shipped class IDs or labels.** `yellow`, `red`, `blue`
   class order is load-bearing across the Limelight labels and the Control Hub
   pipelines.

@@ -1,5 +1,10 @@
 # Set up the Control Hub (Lab)
 
+> **ARCHIVED (2026-10-11).** The Lab track is retired — no teams use it. Source
+> lives in [`archive/lab/`](../../archive/lab/README.md) for reference only.
+> Use the [Limelight 3A SSD](limelight_3a_ssd/limelight_3a_setup.md) or the
+> [Control Hub OpenCV/HSV track](hub_hsv_setup.md) instead.
+
 The shadow-robust middle track: CIELAB chromaticity hue plus an adaptive
 chroma floor, with constants **learned from the YOLO model** on real match
 footage. Like the HSV track it runs on the Control Hub with zero model
@@ -10,14 +15,14 @@ in shadow keeps its hue and only needs a lower chroma bar.
 
 | Thing | What it's for |
 |-------|---------------|
-| `lab/TeamCode/BallBlobPipeline.java` + `lab/TeamCode/LabBallDetectorPipeline.java` | the VisionProcessor drop-in + the base class it extends |
-| `lab/tools/lab_tuned.json` | shipped learned constants |
+| `archive/lab/TeamCode/BallBlobPipeline.java` + `archive/lab/TeamCode/LabBallDetectorPipeline.java` | the VisionProcessor drop-in + the base class it extends |
+| `archive/lab/tools/lab_tuned.json` | shipped learned constants |
 | An FTC SDK project with a webcam | `VisionPortal` + EasyOpenCV |
 
 ## Step 1 — Copy the pipeline into your project
 
-Copy `lab/TeamCode/BallBlobPipeline.java` (the base class) **and**
-`lab/TeamCode/LabBallDetectorPipeline.java` into your FTC SDK project's
+Copy `archive/lab/TeamCode/BallBlobPipeline.java` (the base class) **and**
+`archive/lab/TeamCode/LabBallDetectorPipeline.java` into your FTC SDK project's
 `TeamCode/` folder.
 
 ## Step 2 — Register it in an OpMode
@@ -52,13 +57,13 @@ scale-free.
 
 ```bash
 # live look at what the Control-Hub pipeline will see
-python lab/tools/realtime_lab.py --source path/to/match.mp4
+python archive/lab/tools/realtime_lab.py --source path/to/match.mp4
 
 # live tuning of the hue band + adaptive chroma floor on a real frame/webcam
-python lab/tools/lab_tuner.py path/to/frame.jpg
+python archive/lab/tools/lab_tuner.py path/to/frame.jpg
 
 # or re-learn everything straight from the YOLO model
-python lab/tools/fit_lab_from_yolo.py --source path/to/match_raw.mp4 \
+python archive/lab/tools/fit_lab_from_yolo.py --source path/to/match_raw.mp4 \
   --out lab_tuned.json --truth-json docs/yolo_truth_lab.json
 ```
 
@@ -75,4 +80,4 @@ Copy the printed values into the `YELLOW_LO`, `RED_LO`, `BLUE_LO`,
 - The shipped constants were fitted to the dev match video — re-check on
   your field's white balance.
 - Measured recall/precision and the dark-frame head-to-head vs HSV are in
-  [lab/docs/lab_detector_report.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/lab/docs/lab_detector_report.md).
+  [archive/lab/docs/lab_detector_report.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/archive/lab/docs/lab_detector_report.md).

@@ -1,20 +1,21 @@
-# Control Hub (OpenCV HSV + Lab)
+# Control Hub (OpenCV HSV)
 
-Two model-free hub tracks: `cv/TeamCode/BallDetectorPipeline.java` (HSV) and
-`lab/TeamCode/LabBallDetectorPipeline.java` (Lab chromaticity), both extending
-the shared base `cv/TeamCode/BallBlobPipeline.java`. Setup, tuning
+One model-free hub track: `cv/TeamCode/BallDetectorPipeline.java` (HSV),
+extending the shared base `cv/TeamCode/BallBlobPipeline.java`. Setup, tuning
 commands, and viewer tools are in
-[cv/README.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/cv/README.md)
-and
-[lab/README.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/lab/README.md),
-or follow the step-by-step: [Set up the HSV track](hub_hsv_setup.md) ·
-[Set up the Lab track](hub_lab_setup.md).
+[cv/README.md](https://github.com/sidhuharjas/Hive-Vision/blob/main/cv/README.md),
+or follow the step-by-step: [Set up the HSV track](hub_hsv_setup.md).
 This page covers the decision and what to expect from the outputs.
+
+> A second hub track — Lab chromaticity — is **archived (2026-10-11)**: source
+> in [`archive/lab/`](https://github.com/sidhuharjas/Hive-Vision/blob/main/archive/lab/README.md),
+> setup notes in [Set up the Lab track](hub_lab_setup.md). No teams were using
+> it; the Limelight 3A SSD covers the shadow case it used to own.
 
 ## Pick
 
-- **Lab** when balls sit in shadows; **HSV** when you want the cheapest path on
-  a stable-lighting field.
+- **HSV** when you want the cheapest path on a stable-lighting field. For
+  shadows, use the Limelight 3A SSD track.
 - A ball deep in shadow is too desaturated for *any* color-only detector — that
   case belongs to the Limelight 3A track.
 
