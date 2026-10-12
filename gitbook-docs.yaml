@@ -14,7 +14,7 @@ site:
           path: overview
           default: true
           content:
-            directory: ./docs
+            directory: ./get-started/overview
     - type: section
       key: section-updates
       title: Updates
@@ -26,7 +26,7 @@ site:
           path: updates-releases
           default: true
           content:
-            directory: ./updates
+            directory: ./updates/updates-releases
     - type: section
       key: section-api
       title: API
