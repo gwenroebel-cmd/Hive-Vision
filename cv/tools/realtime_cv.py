@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Real-time OpenCV (color thresholding) viewer for a video file -- same look and
-controls as scripts/detect_video_realtime.py but with NO model: it runs pure
+controls as the SSD viewer (neural-net/scripts/detect_video_ssd_realtime.py)
+but with NO model: it runs pure
 HSV thresholding, so it measures what a Control-Hub color detector will see.
 
 Usage:

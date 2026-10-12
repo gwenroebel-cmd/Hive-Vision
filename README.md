@@ -13,7 +13,6 @@ Full docs: <https://sidhuharjas.gitbook.io/hive-vision>
 - [PC tools](#pc-tools)
   - [Licensing](#licensing)
 - [Quick start](#quick-start)
-  - [PC / ONNX Runtime track (YOLOv8n reference / dev tooling)](#pc--onnx-runtime-track-yolov8n-reference--dev-tooling)
   - [Control Hub track (OpenCV)](#control-hub-track-opencv)
   - [Control Hub track (Lab — shadow-robust chromaticity, no model)](#control-hub-track-lab--shadow-robust-chromaticity-no-model)
   - [Limelight 3A FTC integration](#limelight-3a-ftc-integration)
@@ -35,68 +34,50 @@ Full docs: <https://sidhuharjas.gitbook.io/hive-vision>
 
 Hive Vision is a real-time ball-detection suite for FTC, ready to drop into
 your robot stack. Every game object — the team's balls in their lane colors —
-is found and tracked with three deployment options:
+is found and tracked with two deployment options:
 
 | Track | Where it runs | Cost | Artifacts |
 |-------|---------------|------|-----------|
-| **Limelight 3A (TFLite)** | on the Limelight 3A connected to the robot | **SSD-MobileNetV2** (300×300, uint8-in / float-out `.tflite`) — the model now in place instead of YOLO | [`neural-net/weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite`](neural-net/README.md) + [`labels.txt`](neural-net/weights/labels.txt) |
-| **PC / ONNX Runtime (YOLO)** | dev laptop, Jetson, or another ONNX Runtime coprocessor — **not a Limelight** (Limelight neural detectors accept `.tflite`/`.hef` only, never ONNX) | YOLOv8n reference model | [`neural-net/weights/best.onnx`](neural-net/README.md) (+ `.pt` source) |
+| **Limelight 3A (TFLite)** | on the Limelight 3A connected to the robot | **SSD-MobileNetV2** (300×300, uint8-in / float-out `.tflite`) | [`neural-net/weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite`](neural-net/README.md) + [`labels.txt`](neural-net/weights/labels.txt) |
 | **Control Hub (OpenCV)** | on the robot Control Hub itself | none — pure OpenCV, no model | [`TeamCode/BallDetectorPipeline.java`](cv/README.md) |
-| **Control Hub (Lab)** *(archived)* | on the robot Control Hub itself | one Lab conversion, no model | [`TeamCode/LabBallDetectorPipeline.java`](archive/lab/README.md) — retired 2026-10-11, kept for reference |
 
 These are alternative robot deployments. Use the Limelight 3A track when the
-robot has a Limelight 3A; use a Control Hub track when detection must run on
-the Control Hub without a model or coprocessor — pick the **Lab** track when
-balls end up in shadows (it is immune to the classic HSV shadow failure), the
-raw-HSV track when you want the absolute cheapest path. The Limelight 3A SSD
-and the YOLOv8n ONNX model both detect `yellow`, `red`, and `blue` in that
-class order. The Control Hub detectors return color candidates and must be
-confirmed across several frames before the robot acts on one.
+robot has a Limelight 3A; use the Control Hub track when detection must run on
+the Control Hub without a model or coprocessor — the raw-HSV track is the
+absolute cheapest path. Both detect `yellow`, `red`, and `blue` in that class
+order. The Control Hub detector returns color candidates and must be confirmed
+across several frames before the robot acts on one.
 
-Note: no Limelight runs ONNX — Limelight neural detectors accept `.tflite` or
-Hailo `.hef` only. The Limelight 3A runs **SSD-MobileNetV2 in place of YOLO**
-(see `neural-net/README.md`); the YOLOv8n ONNX lives on a **PC / ONNX Runtime
-host**. The Control Hub **Lab** track was tuned using this repo's *other*
-YOLO — the YOLOv8n reference model — to generate its reference detections.
+Two earlier tracks — the **PC / ONNX Runtime (YOLOv8n)** track and the
+**Control Hub Lab** chromaticity track — are **archived** (see
+[`archive/`](archive/README.md)); they are not maintained and are kept for
+reference only.
 
 ## Deployment tradeoffs
 
 | Option | Strengths | Tradeoffs |
 |--------|-----------|-----------|
 | Limelight 3A (SSD-MobileNetV2) | on-robot neural detection, adaptable to shape, distance, blur, and changing backgrounds | Requires a Limelight 3A, model upload, and FTC-side result integration |
-| PC / ONNX Runtime (YOLOv8n reference) | same CNN used as the reference; runs anywhere with ONNX Runtime (Jetson, dev PC) | not a robot deployment — and no Limelight can load ONNX |
 | Control Hub OpenCV | Lightweight, low-cost, and fast to run locally with no model or coprocessor | Less adaptable to lighting, white balance, camera resolution, and colors that resemble the balls; requires field retuning |
-| Control Hub Lab | Same cost as OpenCV, but matches on Lab chromaticity hue with an adaptive chroma floor — the classic HSV shadow failure (a shadowed ball reading as a different color) is largely gone | Slightly more compute than HSV; deep-shadow balls are so desaturated that no color-only detector can see them (then use the Limelight 3A SSD track) |
 
-Use OpenCV when simplicity and low hardware cost matter most. Use the Lab
-variant when balls live in shadows. Use the Limelight 3A track when the robot
-can support it and detection reliability matters more than the extra hardware
-and setup — that track runs **SSD-MobileNetV2** in place of YOLO. The YOLOv8n
-ONNX export is a **PC / ONNX Runtime** artifact (dev laptop, Jetson, or other
-coprocessor); it never goes on a Limelight.
+Use the Limelight 3A track when the robot can support it and detection
+reliability matters more than the extra hardware and setup. Use OpenCV when
+simplicity and low hardware cost matter most.
 
 ## Features
 
-- **Three paths, one tuning** — every Control Hub variant is learned from the
-  repo's YOLOv8n reference detections (the Lab hue bands/floor via
-  `archive/lab/tools/fit_lab_from_yolo.py`, the HSV ranges likewise), so all three
-  agree on where the balls are. The Lab detector was therefore **optimized
-  with this repo's other YOLO** (the YOLOv8n reference detections), even
-  though the Limelight 3A now ships SSD-MobileNetV2.
-- **No coprocessor, no model** for the hub tracks — just EasyOpenCV on the
+- **Two paths, one class order** — the Limelight 3A SSD and the Control Hub
+  OpenCV/HSV track both report `yellow`, `red`, `blue`, so FTC-side code and
+  labels stay in sync across deployments.
+- **No coprocessor, no model** for the hub track — just EasyOpenCV on the
   Control Hub.
-- **Shadow-proof middle track** — Lab separates lightness from chromaticity,
-  so a ball in shadow keeps its hue and only needs a lower chroma bar, which
-  the detector sets adaptively per frame (measured dark-frame red recall
-  95.5% vs 40% for HSV on the same truth).
 - **~2 confirmable blob candidates per frame** after gating (a 900–12000 px
   ball-size band, squareness, and fill) vs ~50 raw threshold blobs.
 - **Best-blob picker per color** — nearest to the real ball's area and
   roundness, penalized at the frame edge, so robot panels of the same hue
   don't win.
 - **Measured, not guessed** — recall vs the model's reference detections on a
-  shared 293-frame truth: yellow 62%, red 35%, blue 53% (head-to-head in
-  [`archive/lab/docs/lab_detector_report.md`](archive/lab/docs/lab_detector_report.md); the CV track's own
+  shared 293-frame truth: yellow 62%, red 35%, blue 53% (the CV track's own
   866-frame measurement is in
   [`cv/docs/cv_detector_report.md`](cv/docs/cv_detector_report.md)).
 - **Drop-in FTC API** — [`api/`](api/) has `ftc_ball_chase_lib`: a tracker
@@ -105,26 +86,23 @@ coprocessor); it never goes on a Limelight.
 
 ## Model details
 
-Two deployed Limelight models were trained on synthetic renders plus real
-footage — the SSD retrain now uses a corpus of roughly 10,000 labeled images
-(the SSD training set alone is ~9,480 images, up from ~7,000):
+The Limelight 3A model was trained on synthetic renders plus real footage —
+the SSD retrain now uses a corpus of roughly 14,000 labeled images:
 
-- **YOLOv8n** (`neural-net/weights/best.pt` / `best.onnx`) — the ONNX/reference
-  model, running on a PC / ONNX Runtime host (Jetson, dev laptop) rather than
-  a Limelight, and the ground-truth source the Control Hub Lab and HSV tracks
-  were tuned against (this repo's "other YOLO").
 - **SSD-MobileNetV2** (`best_limelight3a_ssd_mobilenetv2_300x300.tflite`) —
-  the model **in place instead of YOLO** on the Limelight 3A neural detector,
-  retrained for the 3A's required full-INT8 `TFLite_Detection_PostProcess`
-  contract (details in [`neural-net/README.md`](neural-net/README.md)). The shipped
-  version (v1.1.0) was retrained with shadow-hardening data and hard negatives
-  (wiring, robot chassis, field signage) so shadows and off-field objects are
-  no longer reported as game elements.
+  the model on the Limelight 3A neural detector, trained for the 3A's required
+  full-INT8 `TFLite_Detection_PostProcess` contract (details in
+  [`neural-net/README.md`](neural-net/README.md)).
 
 The dataset includes yellow, red, and blue balls, plus difficult examples
 involving blur, occlusion, distance, field lighting, shadows, and
 robot-colored distractions. Evaluation results were measured on separate
 footage from the training images.
+
+An earlier YOLOv8n reference model (`best.pt` / `best.onnx`) is archived under
+[`archive/yolo-pc/`](archive/yolo-pc/README.md); it was the ground-truth source
+the Control Hub tracks were originally tuned against and is no longer a
+deployment target.
 
 ## PC tools
 
@@ -134,31 +112,18 @@ pip install -r requirements.txt
 
 Python 3.10+ is required only for the optional PC viewers, evaluation, and
 tuning tools. The Limelight 3A deployment uses the shipped SSD `.tflite`; the
-PC / ONNX Runtime track uses `best.onnx`; the Control Hub deployment uses the
-Java files and does not need Python.
+Control Hub deployment uses the Java files and does not need Python.
 
 ### Licensing
 
 Original Hive Vision code, documentation, and configuration are released
-under the MIT License. The YOLO weights and Ultralytics-dependent training or
-inference material are distributed subject to Ultralytics' AGPL-3.0 licensing
-terms; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Check those terms
-before incorporating the YOLO artifacts into a closed-source product.
+under the MIT License. The archived YOLO weights and Ultralytics-dependent
+material under [`archive/yolo-pc/`](archive/yolo-pc/README.md) are distributed
+subject to Ultralytics' AGPL-3.0 licensing terms; see
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Check those terms before
+incorporating any YOLO artifacts into a closed-source product.
 
 ## Quick start
-
-### PC / ONNX Runtime track (YOLOv8n reference / dev tooling)
-
-```bash
-# Real-time viewer (webcam; run from this directory)
-python neural-net/scripts/detect_video_realtime.py --weights neural-net/weights/best.pt
-
-# ...or over a video file
-python neural-net/scripts/detect_video_realtime.py --weights neural-net/weights/best.pt --source path/to/match.mp4
-
-# Export an annotated video with labels
-python neural-net/scripts/export_annotated.py --weights neural-net/weights/best.pt --source path/to/match.mp4 --out annotated.mp4
-```
 
 ### Control Hub track (OpenCV)
 
@@ -185,19 +150,14 @@ python archive/lab/tools/eval_lab_vs_yolo.py --source path/to/match_raw.mp4 \
 ```
 
 For the Limelight 3A, upload
-**`neural-net/weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite`** — the
-SSD-MobileNetV2 model in place instead of YOLO — with
+**`neural-net/weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite`** with
 [`neural-net/weights/labels.txt`](neural-net/weights/labels.txt) and class order
-`yellow_pollen`, `red_nectar`, `blue_nectar`. No Limelight accepts ONNX; the
-YOLOv8n `best.onnx` (and the float32/int8 YOLO `.tflite` test artifacts) run
-on a PC / ONNX Runtime host. Read detections through the
-Limelight API used by your FTC integration. For the Control Hub paths, copy
+`yellow_pollen`, `red_nectar`, `blue_nectar`. Read detections through the
+Limelight API used by your FTC integration. For the Control Hub path, copy
 the shared base `cv/TeamCode/BallBlobPipeline.java` plus
-`cv/TeamCode/BallDetectorPipeline.java` (HSV) or
-`archive/lab/TeamCode/LabBallDetectorPipeline.java` (Lab chromaticity) into
+`cv/TeamCode/BallDetectorPipeline.java` (HSV) into
 `TeamCode/`, register the processor with a `VisionPortal`, and read
-`bestOf(BallColor)` — see [cv/README.md](cv/README.md) and
-[archive/lab/README.md](archive/lab/README.md).
+`bestOf(BallColor)` — see [cv/README.md](cv/README.md).
 
 ### Limelight 3A FTC integration
 
@@ -220,53 +180,25 @@ It compiles against FTC SDK 11.x + Pedro Pathing 2.x with a laptop self-test
 
 ## Publishing the model
 
-`neural-net/weights/best.onnx` ships pre-exported for **ONNX Runtime hosts** — a dev
-PC, a Jetson, or another ONNX-capable coprocessor (Limelights are not
-ONNX-capable; their neural detectors take `.tflite`/`.hef` only).
-(YOLOv8n, input 960×960, opset 12, ~12 MB). Its output is the **raw YOLO
-tensor** `output0` (1×7×18900) — anchor-row cx/cy/w/h + three class scores,
-not decoded detections; do the decode + NMS on the device or in your FTC
-pipeline. Upload `best.onnx` to an ONNX Runtime host (dev PC / Jetson /
-coprocessor) — the Limelight web interface only loads `.tflite`/`.hef`
-models, so it cannot run this file — and verify the input size and class
-names before connecting the FTC-side result reader. To re-export with
-different settings:
-
-```bash
-python -m ultralytics.export model=neural-net/weights/best.pt format=onnx imgsz=960 opset=12
-```
-
-- `imgsz 960` is the quality setting used for development — tiny far-corner
-  balls are recovered that 640 misses (see `neural-net/README.md`).
-- If your ONNX Runtime host has an input-size limit, re-export at a
-  smaller `imgsz` (e.g. `640`); expect far-corner recall to drop.
-- Always re-export and re-upload after re-tuning on a new field.
-
-For the **Limelight 3A** neural detector, do not upload the ONNX or the float
-in/out YOLO TFLite exports — the 3A requires a full-INT8 SSD with
-`TFLite_Detection_PostProcess`. Upload
-`best_limelight3a_ssd_mobilenetv2_300x300.tflite` with `labels.txt`; its
-outputs are the SSD post-process tensors (`num`, `scores [1,10]`,
-`class_ids [1,10]`, `boxes [1,10,4]`, normalized), read them through the
-Limelight API used by your FTC integration (see
-[`neural-net/README.md`](neural-net/README.md)).
+For the **Limelight 3A** neural detector, upload
+`neural-net/weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite` with
+`labels.txt`; its outputs are the SSD post-process tensors (`num`,
+`scores [1,10]`, `class_ids [1,10]`, `boxes [1,10,4]`, normalized), read them
+through the Limelight API used by your FTC integration (see
+[`neural-net/README.md`](neural-net/README.md)). The 3A requires a full-INT8
+SSD with `TFLite_Detection_PostProcess` — do not upload float in/out models.
 
 ## Performance
 
 | Track | Recall | Precision | Note |
 |-------|--------|-----------|------|
-| PC / ONNX Runtime (YOLOv8n, 960) | reference | reference | source of reference detections; also the "other YOLO" the Control Hub tracks are tuned with |
 | Control Hub (OpenCV) | yellow 62.0% / red 34.5% / blue 52.8% | 10.5 / 8.6 / 11.1% | raw per-frame **candidate** precision — treat as a candidate signal |
-| Control Hub (Lab) | yellow 45.5% / red 46.0% / blue 54.5% | 7.5 / 8.7 / 8.1% | raw per-frame **candidate** precision — Control Hub detections must be confirmed across several frames before the robot acts, so confirmed-target precision is far higher; dark-frame red recall 95.5% vs 40% for HSV (see [lab report](archive/lab/docs/lab_detector_report.md)) |
 
-Both Control Hub rows are measured **head-to-head on a shared 293-frame truth**
-(identical YOLO reference detections and geometry gates — see
-[`archive/lab/docs/lab_detector_report.md`](archive/lab/docs/lab_detector_report.md)). The CV track's
-own separate evaluation on its 866-frame dev video reports higher raw numbers —
+Measured against a shared 293-frame truth (the Control Hub track's own
+separate evaluation on its 866-frame dev video reports higher raw numbers —
 yellow 68.7% / red 80.1% / blue 82.3% recall at 39.9 / 26.0 / 65.5% precision —
-because that footage skews easier for HSV (see
-[`cv/docs/cv_detector_report.md`](cv/docs/cv_detector_report.md)). Prefer the
-shared-truth table when comparing one track against another.
+because that footage skews easier for HSV; see
+[`cv/docs/cv_detector_report.md`](cv/docs/cv_detector_report.md)).
 
 ### What these numbers mean
 
@@ -284,14 +216,10 @@ success on your own robot.
 
 ```
 hive-vision/
-  neural-net/              Limelight track (SSD TFLite + YOLO ONNX)
-    weights/best.pt           YOLOv8n source checkpoint (6 MB) — reference model; the Lab track's tuning truth
-    weights/best.onnx         exported ONNX, ONNX Runtime only (12 MB) — Limelight neural detectors don't run ONNX
-    weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite  Limelight 3A model (5 MB, SSD-MobileNetV2 — in place of YOLO)
-    weights/best_limelight3a_float32.tflite  float32 YOLO export (12 MB) — PC/ONNX testing only
-    weights/best_limelight3a_int8.tflite     int8-weight YOLO export (3.4 MB) — PC/ONNX testing only
+  neural-net/              Limelight track (SSD TFLite)
+    weights/best_limelight3a_ssd_mobilenetv2_300x300.tflite  Limelight 3A model (5 MB, SSD-MobileNetV2)
     weights/labels.txt        class labels: pollen/nectar order
-    scripts/                  live viewer + annotated-video exporter
+    scripts/                  SSD live viewer
   cv/                         Control Hub track (HSV)
     TeamCode/                 BallBlobPipeline.java + BallDetectorPipeline.java (drop-in processors)
     tools/                    tuning/eval tooling + shipped HSV config
@@ -300,6 +228,10 @@ hive-vision/
     TeamCode/                 BallBlobPipeline.java + LabBallDetectorPipeline.java (drop-in processor)
     tools/                    YOLO-learned config, fitter, sweep, tuner, viewer
     docs/                     evaluation report, cached YOLO reference detections
+  archive/yolo-pc/             ARCHIVED PC / YOLO / ONNX track (retired 2026-10-11)
+    weights/                  best.pt, best.onnx, float32 tflite (reference model only)
+    scripts/                  YOLO/int8 PC viewers + exporters
+    docs/                     retired PC/ONNX doc pages
   ftc_ball_chase_lib/          FTC-side library (BallTracker + chase drivers)
     final/                     BallTracker, BallChaseController/Follower, BallHunt, BallMath
     wrapper/                   fluent verb API over Pedro/mecanum drivetrains
@@ -307,7 +239,7 @@ hive-vision/
   shipping/                   ready-to-ship handbook (artifacts, comparison, checklist)
   demo/                       short annotated example clips
   logo.png                    project logo
-  LICENSE                     MIT (code) — see THIRD_PARTY_NOTICES.md for neural-net/ (AGPL-3.0)
+  LICENSE                     MIT (code) — see THIRD_PARTY_NOTICES.md for archive/yolo-pc/ (AGPL-3.0)
 ```
 
 ## Ball-chase API
@@ -349,12 +281,10 @@ own footage if permission is unclear.
 
 | Clip | Shows | Footage |
 |------|-------|---------|
-| [`demo/yolo_example_1.mp4`](demo/yolo_example_1.mp4) | YOLO example | kickoff video |
-| [`demo/yolo_example_2.mp4`](demo/yolo_example_2.mp4) | YOLO example | kickoff video |
 | [`demo/ssd_mobilenetv2.mp4`](demo/ssd_mobilenetv2.mp4) | Limelight 3A SSD-MobileNetV2 example | kickoff video |
 | [`demo/control_hub_cv_example_1.mp4`](demo/control_hub_cv_example_1.mp4) | Control Hub/OpenCV example | kickoff video |
 | [`demo/control_hub_cv_example_2.mp4`](demo/control_hub_cv_example_2.mp4) | Control Hub/OpenCV example | kickoff video |
-| [`demo/cielab_demo.mp4`](demo/cielab_demo.mp4) | CIELAB (Lab track) example | own match capture |
+| [`demo/cielab_demo.mp4`](demo/cielab_demo.mp4) | CIELAB (Lab track, archived) example | own match capture |
 | [`demo/ssd_in_action.mp4`](demo/ssd_in_action.mp4) | Limelight 3A SSD tested in the real world | recorded by Javi Nashat (Lazer Robotics 23286) |
 | [`demo/javi_v1_1_ssd.mp4`](demo/javi_v1_1_ssd.mp4) | Limelight 3A SSD v1.1 tested in the real world | recorded by Javi Nashat (Lazer Robotics 23286) |
 | [`demo/probiotix_api_robot_drive.mp4`](demo/probiotix_api_robot_drive.mp4) | robot drive coded using the [ball-chase API](api/) | provided by Team 16765 ProBotiX |
@@ -379,10 +309,6 @@ own footage if permission is unclear.
 These animated previews loop automatically in GitHub. Open the MP4 links above
 for the full-resolution clips with playback controls.
 
-![YOLO example 1](demo/previews/yolo_example_1.gif)
-
-![YOLO example 2](demo/previews/yolo_example_2.gif)
-
 ![SSD-MobileNetV2 example](demo/previews/ssd_mobilenetv2.gif)
 
 ![Control Hub OpenCV example 1](demo/previews/control_hub_cv_example_1.gif)
@@ -402,13 +328,11 @@ for the full-resolution clips with playback controls.
 ### Image samples
 
 These samples use a screenshot from the same [kickoff video](https://www.youtube.com/watch?v=gO98TkgY0kI)
-as input. YOLO samples show the effect of two confidence thresholds; OpenCV
-samples show the normal best-candidate output and the full set of gated
-candidates.
+as input. OpenCV samples show the normal best-candidate output and the full
+set of gated candidates.
 
 | Model | Sample 1 | Sample 2 |
 |-------|----------|----------|
-| Limelight/YOLO | [confidence 0.25](demo/samples/yolo_sample_1_conf25.jpg) | [confidence 0.50](demo/samples/yolo_sample_2_conf50.jpg) |
 | Control Hub/OpenCV | [best candidate](demo/samples/control_hub_cv_sample_1_best.jpg) | [all gated candidates](demo/samples/control_hub_cv_sample_2_all.jpg) |
 
 ## Community
@@ -423,7 +347,7 @@ for bugs, suggestions, or dataset contributions.
 Hive Vision will be updated throughout the season, with a planned release or
 model update every other week as new real footage, field conditions, camera
 angles, and difficult examples become available. Updates may include refreshed
-YOLO or SSD-MobileNetV2 weights, improved OpenCV HSV settings, new evaluation
+SSD-MobileNetV2 weights, improved OpenCV HSV settings, new evaluation
 results, and new demo samples.
 
 To contribute training data, join the Discord server and share a link in the

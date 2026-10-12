@@ -7,8 +7,8 @@ data and code. Data submission has its own workflow — see
 ## Scope
 
 Hive Vision is a model-plus-advice project: published reference weights
-(YOLOv8n ONNX, Limelight 3A SSD-MobileNetV2 TFLite), Control Hub OpenCV/Lab
-pipelines, PC tooling, and the FTC-side `ftc_ball_chase_lib`. The API is small
+(Limelight 3A SSD-MobileNetV2 TFLite), Control Hub OpenCV pipelines,
+and the FTC-side `ftc_ball_chase_lib`. The API is small
 by design. Before opening a PR, say what problem it solves — the tracker,
 the docs, or the robot libraries.
 
@@ -53,7 +53,7 @@ cd ftc_ball_chase_lib
 
 ## Licensing
 
-MIT for code, docs, and configuration. YOLO model artifacts and
-Ultralytics-dependent material are AGPL-3.0 — see
+MIT for code, docs, and configuration. The archived YOLO model artifacts in
+`archive/yolo-pc/` and Ultralytics-dependent material are AGPL-3.0 — see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). By contributing you agree to
 release your contribution under those terms.

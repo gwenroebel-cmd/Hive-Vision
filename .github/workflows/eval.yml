@@ -21,7 +21,7 @@ jobs:
         run: python cv/tools/eval_cv_vs_yolo.py \
           --config cv/tools/hsv_tuned.json \
           --source demo/control_hub_cv_example_1.mp4 \
-          --weights neural-net/weights/best.pt \
+          --weights archive/yolo-pc/weights/best.pt \
           --truth-json /tmp/ci_truth_cv.json
 
       # Lab track eval removed 2026-10-11: the Lab detector is archived under

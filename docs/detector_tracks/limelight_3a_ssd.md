@@ -1,7 +1,7 @@
 # Limelight 3A (SSD-MobileNetV2)
 
 The on-robot neural track: a TFLite **SSD-MobileNetV2** model trained on the
-same synthetic + real corpus as the YOLOv8n reference, running on the
+same synthetic + real corpus as the rest of Hive Vision, running on the
 Limelight 3A's own CPU. The decision guide is in
 [Which detector track?](README.md); wire it up step by step with the
 [set-up walkthrough](limelight_3a_setup.md). Model details and export notes
@@ -22,8 +22,9 @@ Two things to know, stated plainly:
 
 - This is the **only track that understands shape** — use it when balls and
   their shadows are in play and a color-only detector can't be trusted.
-- **No Limelight runs ONNX.** This SSD model is what sits *in place of* YOLO;
-  `best.onnx` stays on a PC / ONNX Runtime host.
+- An earlier YOLOv8n PC/ONNX reference model is archived under
+  `archive/yolo-pc/`; the 3A only ever loads `.tflite`/`.hef` models, so the
+  archived ONNX/float32 exports never go on a Limelight of any kind.
 - Per the repo checklist this SSD is verified on PC runners but **not yet on a
   real 3A** — first time on hardware, confirm the pipeline loads and reports
   detections before match day.

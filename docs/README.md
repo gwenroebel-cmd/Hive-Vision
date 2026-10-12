@@ -14,7 +14,6 @@ Pick the track you have hardware for and be up in ~5 minutes:
 
 * [Which detector track?](detector_tracks/) — the decision guide, with full per-track setup walkthroughs:
   * [Limelight 3A (SSD) — set it up](detector_tracks/limelight_3a_ssd/limelight_3a_setup.md)
-  * [PC / ONNX Runtime (YOLO) — run it on a PC](detector_tracks/onnx_pc/onnx_run_pc.md)
   * [Control Hub (OpenCV)](detector_tracks/control_hub/) — [HSV setup](detector_tracks/control_hub/hub_hsv_setup.md) · [Lab setup](detector_tracks/control_hub/hub_lab_setup.md) *(archived)*
 * [Calibration & coordinates](calibration.md) — how to measure `CAM_*`, and the sign conventions
 * [Known limitations](known_limitations.md) — what the detectors can't do, and the fixes

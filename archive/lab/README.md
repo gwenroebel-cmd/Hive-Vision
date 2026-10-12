@@ -1,5 +1,11 @@
 # Hive Vision — Lab track (Control Hub, middle ground)
 
+> **ARCHIVED (2026-10-11).** No teams are using the Lab track — the shipped
+> paths are the **Limelight 3A SSD** (neural-net/) and the **Control Hub
+> OpenCV/HSV** (cv/) detectors. Kept here for reference only; not maintained,
+> not in CI, not in the shipping handbook's active list. Links elsewhere in
+> the repo were rewritten to `archive/lab/`.
+
 A middle track between the two shipped Hive Vision paths:
 
 | track             | what                                            | cost                              |

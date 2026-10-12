@@ -12,7 +12,7 @@ out_*.jpg
 
 # Model/training artifacts you regenerate
 *.pt
-!neural-net/weights/best.pt
+!archive/yolo-pc/weights/best.pt
 runs/
 dataset/
 
@@ -24,7 +24,7 @@ Thumbs.db
 neural-net/.venv-tflite/
 neural-net/_litert_int8/
 neural-net/weights/best_saved_model/
-neural-net/weights/best.onnx.data
+archive/yolo-pc/weights/best.onnx.data
 demo/frames/
 demo/tflite_test_v7f_int8.mp4
 # SSD v1 superseded by v2 - keep out of the repo
