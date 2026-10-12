@@ -2,7 +2,7 @@
 
 Hive Vision is a real-time FTC ball-detection suite (`yellow_pollen`, `red_nectar`, `blue_nectar`). The repo README is the source of truth for everything technical; this book exists to (a) help a new team pick a track and (b) give step-by-step setup instructions you can follow with the camera on the bench.
 
-> **Latest model: v2.0.0** — SSD-MobileNetV2, full-int8, up to 25 detections per frame. See the [Updates section](/hive-vision/updates/release_notes_v2.0.0.md) for the full notes, or download from the [GitHub release](https://github.com/hivevisionftc/Hive-Vision/releases/tag/v2.0.0).
+> **Latest model: v2.0.0** — SSD-MobileNetV2, full-int8, up to 25 detections per frame. Download it and read the full notes from the [GitHub release](https://github.com/hivevisionftc/Hive-Vision/releases/tag/v2.0.0).
 
 ## 5-minute quick starts
 
