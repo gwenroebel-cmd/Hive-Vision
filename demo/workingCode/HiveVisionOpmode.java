@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Size;
 
-@TeleOp(name = "teleopWebcam")
-public class teleopWebcam extends LinearOpMode {
+@TeleOp(name = "HiveVisionOpmode")
+public class HiveVisionOpmode extends LinearOpMode {
 
     private DcMotor leftFront = null;
     private DcMotor leftRear = null;
