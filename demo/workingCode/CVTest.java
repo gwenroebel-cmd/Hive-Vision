@@ -1,20 +1,14 @@
-package org.firstinspires.ftc.teamcode.tests;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+package org.firstinspires.ftc.teamcode;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.customCV.CVPathGen;
-
+import org.firstinspires.ftc.teamcode.CVPathGen;
 import java.util.ArrayList;
 
-@Config
+
 @TeleOp
 public class CVTest extends LinearOpMode {
     private CVPathGen pather;
@@ -24,7 +18,6 @@ public class CVTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         follower = Constants.create(hardwareMap);
         follower.setPose(new Pose(35,8.5,Math.toRadians(90)));
         follower.update();
@@ -41,7 +34,7 @@ public class CVTest extends LinearOpMode {
                 }
             }
             if(follower.isBusy() && follower.atParametricEnd()){
-                follower.stop(); //fixes final wierd turns
+                follower.stop();
             }
             for (Pose ball: allBalls) {
                 telemetry.addLine("(" + ball.x() + ", "+ ball.y() + ")");
