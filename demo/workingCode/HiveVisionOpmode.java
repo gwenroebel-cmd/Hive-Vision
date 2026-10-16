@@ -16,14 +16,11 @@ import com.qualcomm.robotcore.util.Range;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @TeleOp(name = "HiveVisionOpmode")
-public class CVtest extends LinearOpMode {
+public class BallChase extends LinearOpMode {
     private static final String WEBCAM_NAME = "Webcam";
-    public static int PIPELINE_INDEX = 7;
-
     private static final int CLASS_YELLOW = 0;
     private static final int CLASS_RED = 1;
     private static final int CLASS_BLUE = 2;
@@ -31,26 +28,19 @@ public class CVtest extends LinearOpMode {
     private Set<Integer> allowedClasses =
             new HashSet<>(Arrays.asList(CLASS_RED, CLASS_BLUE));
 
-    public static double MIN_CONF = 0.30;
-    private static final long MAX_STALENESS_US = 120_000;
-
-    public static double LOCK_GATE_DEG = 12.0;
     public static long LOCK_LOST_MS = 300;
 
     // If your robot drives backward, change this to a negative value (e.g., -0.40)
-    public static double CHASE_FWD_POWER = -0.40;
-    public static double TURN_KP = -0.025;
+    public static double CHASE_FWD_POWER = 0.40;
+    public static double TURN_KP = 0.025;
     public static double MIN_TURN = 0.08;
     public static double MAX_TURN = 0.60;
     public static double SEARCH_TURN = 0.30;
-
-    private static final double TA_DISTANCE_K = 55.0 * Math.sqrt(0.280);
-
     public static double PICKUP_TA = 0.0;
     public static double COAST_MAX_DIST = 26.0;
     public static double COAST_POWER = 0.25;
-    public static long COAST_MS = 450;
-    public static long TARGET_LOSS_GRACE_MS = 250; // Prevents flickering when target is lost briefly
+    public static long COAST_MS = 550;
+    public static long TARGET_LOSS_GRACE_MS = 400; // Prevents flickering when target is lost briefly
     public static long PICKUP_DWELL_MS = 600;
     public static double INTAKE_POWER = 1.0;
 
@@ -58,7 +48,6 @@ public class CVtest extends LinearOpMode {
     private static final String MOTOR_RF = "frontRight";
     private static final String MOTOR_LB = "backLeft";
     private static final String MOTOR_RB = "backRight";
-    private static final String INTAKE = "intake";
 
     private enum State {
         SEARCHING,
@@ -67,9 +56,7 @@ public class CVtest extends LinearOpMode {
         PICKUP
     }
 
-    private WebcamName webcamName;
     private DcMotor lf, rf, lb, rb;
-    private DcMotor intake;
 
     private State state = State.SEARCHING;
 
@@ -105,7 +92,7 @@ public class CVtest extends LinearOpMode {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        webcamName = hardwareMap.tryGet(WebcamName.class, WEBCAM_NAME);
+        WebcamName webcamName = hardwareMap.tryGet(WebcamName.class, WEBCAM_NAME);
 
         if(webcamName == null){
             telemetry.addLine("Can not connect to webcam.");
@@ -148,7 +135,6 @@ public class CVtest extends LinearOpMode {
             telemetry.update();
         }
 
-        //limelight.stop();
         drive(0, 0, 0);
         setIntake(0);
     }
@@ -193,29 +179,21 @@ public class CVtest extends LinearOpMode {
         BallDetectorPipeline.BallBlob yellow = baller.bestOf(BallDetectorPipeline.BallColor.YELLOW);
         if (yellow != null) {
             telemetry.addData("Yellow", "cx=%.2f cy=%.2f", yellow.cxNorm, yellow.cyNorm);
-//        }
-//
-//        if (target != null) {
-//            double tx = target.getTargetXDegrees();
-//            double ty = target.getTargetYDegrees();
-//            double ta = target.getTargetArea();
-//            double estimatedDist = distanceFromTa(ta);
 
             lastSeenTimer.reset();
-//            lastSeenDist = estimatedDist;
+            lastSeenDist = ((0.15748*3)/yellow.rect.width);
 
             double turn = Range.clip(yellow.cxNorm * TURN_KP, -MAX_TURN, MAX_TURN);
             if (Math.abs(turn) < MIN_TURN) {
                 turn = Math.copySign(MIN_TURN, yellow.cxNorm);
             }
-
             double fwd = CHASE_FWD_POWER;
 
             state = State.CHASING;
             setIntake(INTAKE_POWER);
             drive(fwd, 0, turn);
 
-            telemetry.addData("ball", "tx=%+.1f dist≈%.1f", yellow.cxNorm, 0.0);
+            telemetry.addData("ball", "tx=%+.1f dist≈%.1f", yellow.cxNorm, lastSeenDist);
             return;
         }
 
@@ -265,11 +243,6 @@ public class CVtest extends LinearOpMode {
         lockTy = null;
     }
 
-//    private double distanceFromTa(double taPercent) {
-//        if (taPercent <= 0.0) return Double.MAX_VALUE;
-//        return TA_DISTANCE_K / Math.sqrt(taPercent);
-//    }
-
     private void manualDrive() {
         double fwd = gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
@@ -281,9 +254,9 @@ public class CVtest extends LinearOpMode {
 
     private void drive(double fwd, double strafe, double turn) {
         double pLf = fwd + strafe + turn;
-        double pRf = fwd - strafe - turn;
+        double pRf = fwd - strafe - (turn);
         double pLb = fwd - strafe + turn;
-        double pRb = fwd + strafe - turn;
+        double pRb = fwd + strafe - (turn);
 
         double largestPower = Math.max(
                 1.0,
@@ -303,5 +276,6 @@ public class CVtest extends LinearOpMode {
 //        if (intake != null) {
 //            intake.setPower(power);
 //        }
+//        We did not use Intake
     }
 }
