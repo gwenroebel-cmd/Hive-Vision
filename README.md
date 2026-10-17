@@ -2,7 +2,7 @@
 
 <p align="center"><img src="logo.png" alt="Hive Vision" width="360"/></p>
 
-Full docs: <https://sidhuharjas.gitbook.io/hive-vision>
+Full docs: <https://hivevisionftc.github.io/HiveVisionDocs/>
 
 <details>
 <summary><strong>Contents</strong></summary>
