@@ -36,9 +36,9 @@ public class CVPathGen {
         this.telemetry = telemetry;
 
 
-        ll = hardwareMap.get(Limelight3A.class, "limelight");
+        ll = hardwareMap.get(Limelight3A.class, "limelight"); //change to your name
         ll.start();
-        ll.pipelineSwitch(5);
+        ll.pipelineSwitch(5); // change to your pipeline
     }
     public CVPathGen(boolean isRed){
 
@@ -56,7 +56,7 @@ public class CVPathGen {
         if (result != null && result.isValid()) {
             Pose po = follower.pose();
             for (LLResultTypes.DetectorResult dr : result.getDetectorResults()) {
-                if (!"pollen".equalsIgnoreCase(dr.getClassName())) {
+                if (!"yellow_pollen".equalsIgnoreCase(dr.getClassName())) {
                     continue;
                 }
                 relativeBalls.add(new double[]{Math.toRadians(dr.getTargetXDegrees()), Math.toRadians(dr.getTargetYDegrees())});
